@@ -5,13 +5,13 @@ from __future__ import unicode_literals
 
 import unittest
 import numpy as np
-import tensorflow as tf
+# import tensorflow as tf
 import onnx
-from onnx_tf.backend import run_node, prepare
+from onnx_darknet.backend import run_node, prepare
 from onnx import helper
 from onnx import TensorProto
 
-from onnx_tf.common.legacy import legacy_onnx_pre_1_2
+from onnx_darknet.common.legacy import legacy_onnx_pre_1_2
 
 class TestModel(unittest.TestCase):
   """ Tests for models

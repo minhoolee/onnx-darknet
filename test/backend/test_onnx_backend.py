@@ -8,8 +8,8 @@ import unittest
 
 import onnx.backend.test
 
-from onnx_tf.backend import TensorflowBackend
-from onnx_tf.common.legacy import legacy_onnx_pre_1_2
+from onnx_darknet.backend import TensorflowBackend
+from onnx_darknet.common.legacy import legacy_onnx_pre_1_2
 
 # This is a pytest magic variable to load extra plugins
 pytest_plugins = 'onnx.backend.test.report',

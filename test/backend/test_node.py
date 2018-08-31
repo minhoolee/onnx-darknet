@@ -5,10 +5,10 @@ from __future__ import unicode_literals
 
 import unittest
 import numpy as np
-import tensorflow as tf
-from onnx_tf.backend import run_node
-from onnx_tf.common import supports_device
-from onnx_tf.common.legacy import legacy_onnx_pre_1_2, legacy_opset_pre_6
+# import tensorflow as tf
+from onnx_darknet.backend import run_node
+from onnx_darknet.common import supports_device
+from onnx_darknet.common.legacy import legacy_onnx_pre_1_2, legacy_opset_pre_6
 from onnx import helper
 from onnx import TensorProto
 from onnx import defs

@@ -1,23 +1,23 @@
-# Tensorflow Backend and Frontend for ONNX
-[![Build Status](https://travis-ci.org/onnx/onnx-tensorflow.svg?branch=master)](https://travis-ci.org/onnx/onnx-tensorflow)
+# Darknet Neural Network Backend and Frontend for ONNX
+[![Build Status](https://travis-ci.org/minhoolee/onnx-darknet.svg?branch=master)](https://travis-ci.org/minhoolee/onnx-darknet)
 
-[ONNX-Tensorflow API](https://github.com/onnx/onnx-tensorflow/blob/master/doc/API.md)
+[ONNX-Darknet API](https://github.com/minhoolee/onnx-darknet/blob/master/doc/API.md)
 
-[ONNX-Tensorflow Op Coverage Status](https://github.com/onnx/onnx-tensorflow/blob/master/doc/support_status.md)
+[ONNX-Darknet Op Coverage Status](https://github.com/minhoolee/onnx-darknet/blob/master/doc/support_status.md)
 
 ## Tutorials:
-[Running an ONNX model using Tensorflow](https://github.com/onnx/tutorials/blob/master/tutorials/OnnxTensorflowImport.ipynb)
+[Running an ONNX model using Darknet](https://github.com/onnx/tutorials/blob/master/tutorials/OnnxDarknetImport.ipynb)
 
-[Exporting a Tensorflow Model to ONNX](https://github.com/onnx/tutorials/blob/master/tutorials/OnnxTensorflowExport.ipynb)
+[Exporting a Darknet Model to ONNX](https://github.com/onnx/tutorials/blob/master/tutorials/OnnxDarknetExport.ipynb)
 
 ## To install:
-ONNX-TF requires ONNX (Open Neural Network Exchange) as an external dependency, for any issues related to ONNX installation, we refer our users to [ONNX project repository](https://github.com/onnx/onnx) for documentation and help. Notably, please ensure that protoc is available if you plan to install ONNX via pip.
+ONNX-DN requires ONNX (Open Neural Network Exchange) as an external dependency, for any issues related to ONNX installation, we refer our users to [ONNX project repository](https://github.com/onnx/onnx) for documentation and help. Notably, please ensure that protoc is available if you plan to install ONNX via pip.
 
-The specific ONNX release version that we support in the master branch of ONNX-TF can be found [here](https://github.com/onnx/onnx-tensorflow/blob/master/ONNX_VERSION_NUMBER). This information about ONNX version requirement is automatically encoded in `setup.py`, therefore users needn't worry about ONNX version requirement when installing ONNX-TF.
+The specific ONNX release version that we support in the master branch of ONNX-DN can be found [here](https://github.com/minhoolee/onnx-darknet/blob/master/ONNX_VERSION_NUMBER). This information about ONNX version requirement is automatically encoded in `setup.py`, therefore users needn't worry about ONNX version requirement when installing ONNX-DN.
 
-To install the latest version of ONNX-TF via pip, run `pip install onnx-tf`.
+To install the latest version of ONNX-DN via pip, run `pip install onnx-dn`.
 
-Because users often have their own preferences for which variant of Tensorflow to install (i.e., a GPU version instead of a CPU version), we do not explicitly require tensorflow in the installation script. It is therefore users' responsibility to ensure that the proper variant of Tensorflow is available to ONNX-TF. Moreoever, we require Tensorflow version >= 1.5.0.
+Because users often have their own preferences for which variant of Darknet to install (i.e., a GPU version instead of a CPU version), we do not explicitly require Darknet in the installation script. It is therefore users' responsibility to ensure that the proper variant of Darknet is available to ONNX-DN.
 
 ## To test:
 For backend, run `python -m unittest discover test`.
@@ -26,7 +26,7 @@ For backend, run `python -m unittest discover test`.
 In this example, we will define and run a Relu node and print the result.
 This example is available as a python script at example/relu.py .
 ```python
-from onnx_tf.backend import run_node
+from onnx_darknet.backend import run_node
 from onnx import helper
 
 node_def = helper.make_node("Relu", ["X"], ["Y"])
@@ -37,12 +37,12 @@ The result is `[ 0.   0.1]`
 
 ## Development Install:
 - Install ONNX master branch from source.
-- Install Tensorflow>=1.5.0.
-- Run `git clone git@github.com:onnx/onnx-tensorflow.git && cd onnx-tensorflow`.
+- Install Darknet>=1.5.0.
+- Run `git clone https://github.com/minhoolee/onnx-darknet.git && cd onnx-darknet`.
 - Run `pip install -e .`.
 
 ## Folder Structure:
-- __onnx_tf__ main source code file.
+- __onnx_darknet__ main source code file.
 - __test__ test files.
 
 ## Code Standard:
@@ -68,10 +68,7 @@ http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 https://docs.python.org/2/library/unittest.html
 
 ## Authors:
-Arpith Jacob (IBM Research)
+Mark Lee
 
-Tian Jin (IBM Research)
-
-Gheorghe-Teodor Bercea (IBM Research)
-
-Wenhao Hu (LeapMind)
+## Thanks:
+Significant contributions from [onnx-tensorflow](https://github.com/onnx/onnx-tensorflow) team made it possible to implement onnx-darknet

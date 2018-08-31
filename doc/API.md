@@ -1,14 +1,14 @@
 ONNX-Tensorflow API
 ======
 
-#### `onnx_tf.backend.prepare`
+#### `onnx_darknet.backend.prepare`
 
 <details>
   <summary>Prepare an ONNX model for Tensorflow Backend.
 
   </summary>
 This function converts an ONNX model to an internel representation
-of the computational graph called TensorflowRep and returns
+of the computational graph called DarknetRep and returns
 the converted representation.
 
 </details>
@@ -31,9 +31,9 @@ Currently, the strict flag only affects the behavior of MaxPool and AveragePool 
 
 _returns_:
 
-A TensorflowRep class object representing the ONNX model
+A DarknetRep class object representing the ONNX model
 
-#### `onnx_tf.backend_rep.TensorflowRep.export_graph`
+#### `onnx_darknet.backend_rep.DarknetRep.export_graph`
 
 <details>
   <summary>Export backend representation to a Tensorflow proto file.
@@ -56,7 +56,7 @@ _returns_:
 
 none.
 
-#### `onnx_tf.frontend.tensorflow_graph_to_onnx_model`
+#### `onnx_darknet.frontend.tensorflow_graph_to_onnx_model`
 
 <details>
   <summary>Converts a Tensorflow Graph Proto to an ONNX model

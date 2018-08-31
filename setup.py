@@ -16,14 +16,14 @@ else:
     onnx_dep = "onnx>=" + onnx_version
 
 setuptools.setup(
-    name='onnx-tf',
+    name='onnx-darknet',
     version=version,
     description=
-    'Tensorflow backend and frontend for ONNX (Open Neural Network Exchange).',
+    'Darknet backend and frontend for ONNX (Open Neural Network Exchange).',
     install_requires=[onnx_dep],
-    url='https://github.com/onnx/onnx-tensorflow/',
-    author='Arpith Jacob, Tian Jin, Gheorghe-Teodor Bercea, Wenhao Hu',
-    author_email='tian.jin1@ibm.com',
+    url='https://github.com/minhoolee/onnx-darknet/',
+    author='Mark Lee',
+    author_email='mhlee@ucsd.edu',
     license='Apache License 2.0',
     packages=setuptools.find_packages(),
     zip_safe=False)

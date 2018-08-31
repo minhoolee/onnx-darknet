@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import sys
 import onnx
 import tensorflow
-import onnx_tf
+import onnx_darknet
 import pkg_resources
 
 print("Python version:")

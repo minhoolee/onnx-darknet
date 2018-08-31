@@ -5,15 +5,15 @@ from __future__ import unicode_literals
 
 import unittest
 import numpy as np
-import tensorflow as tf
+# import tensorflow as tf
 
-from onnx_tf.frontend import tensorflow_graph_to_onnx_model
+from onnx_darknet.frontend import tensorflow_graph_to_onnx_model
 from onnx import checker
 from onnx import defs
 
 # for testing
-from onnx_tf.backend import prepare
-from onnx_tf.common.legacy import legacy_opset_pre_6
+from onnx_darknet.backend import prepare
+from onnx_darknet.common.legacy import legacy_opset_pre_6
 
 
 def get_node_by_name(nodes, name):
@@ -46,7 +46,7 @@ def create_test(test_data):
 
   def do_test_expected(self):
     tf.reset_default_graph()
-    tf_op = test_data[1]
+    darknet_op = test_data[1]
     output_name = test_data[2]
     inputs = test_data[3]
     attrs = test_data[4]
@@ -66,7 +66,7 @@ def create_test(test_data):
         tf_param_list.append(placeholder)
       else:
         tf_param_list.append(input_tensor)
-    test_op = tf_op(*tf_param_list, **attrs)
+    test_op = darknet_op(*tf_param_list, **attrs)
     tf_graph = tf.get_default_graph().as_graph_def(add_shapes=True)
     # Construct onnx graph, run with backend.
     onnx_model = tensorflow_graph_to_onnx_model(

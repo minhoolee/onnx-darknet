@@ -8,7 +8,7 @@ import numpy as np
 
 import caffe2.python.onnx.backend as c2
 import onnx
-import onnx_tf.backend as tf
+import onnx_darknet.backend as tf
 from onnx import helper
 from onnx import TensorProto
 

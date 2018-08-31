@@ -19,7 +19,7 @@ Customize op can also be implemented in similar way.
     ```
     non-specific handler
     
-    - update ONNX_OP_TO_TF_OP in common.py
+    - update ONNX_OP_TO_DARKNET_OP in common.py
     - if need, update DEFAULT_ONNX_ATTR_PER_OP
     ```
     ```
@@ -42,7 +42,7 @@ Customize op can also be implemented in similar way.
     or add a new version method under op handler class 
     depends on if you want to add a new op or deal with a new version
     - if need, implement args_check method
-    - add decorator @onnx_op and @tf_op if add a new op handler class
+    - add decorator @onnx_op and @darknet_op if add a new op handler class
     
     * version is the number of since version, which can get from operator's specification
     ```
