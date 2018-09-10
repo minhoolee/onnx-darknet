@@ -21,7 +21,7 @@ from onnx.helper import make_tensor_value_info
 from onnx.helper import mapping
 from onnx.optimizer import optimize
 # import tensorflow as tf
-from tensorflow.core.framework.attr_value_pb2 import AttrValue
+# from tensorflow.core.framework.attr_value_pb2 import AttrValue
 
 from onnx_darknet.common import attr_converter
 from onnx_darknet.common import attr_translator

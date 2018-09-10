@@ -1,4 +1,4 @@
-from tensorflow.python.framework.tensor_util import MakeNdarray
+# from tensorflow.python.framework.tensor_util import MakeNdarray
 
 from onnx_darknet.common import data_type
 

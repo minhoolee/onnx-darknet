@@ -8,7 +8,7 @@ import sys
 import uuid
 
 from onnx.backend.base import DeviceType
-from tensorflow.python.client import device_lib
+# from tensorflow.python.client import device_lib
 
 IS_PYTHON3 = sys.version_info > (3,)
 

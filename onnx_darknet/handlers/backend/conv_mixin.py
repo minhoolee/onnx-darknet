@@ -1,4 +1,4 @@
-# import tensorflow as tf
+import onnx_darknet.darknet as dn
 
 from onnx_darknet.common import get_data_format
 from onnx_darknet.common import get_perm_from_formats
