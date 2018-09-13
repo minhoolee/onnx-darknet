@@ -16,7 +16,6 @@ class DarknetRep(BackendRep):
         self._name = name
         self._inputs = inputs or []
         self._outputs = outputs or []
-        self._ops = ops or []
         self._tensor_dict = tensor_dict or {}
 
     @property

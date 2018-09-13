@@ -16,9 +16,8 @@ def tf2onnx(dtype):
   return mapping.NP_TYPE_TO_TENSOR_TYPE[np.dtype(tf_dype.as_numpy_dtype)]
 
 
-# TODO(minhoolee): Change this to either numpy type or Darknet type
-def onnx2tf(dtype):
-  return tf.as_dtype(mapping.TENSOR_TYPE_TO_NP_TYPE[_onnx_dtype(dtype)])
+def onnx2np(dtype):
+  return mapping.TENSOR_TYPE_TO_NP_TYPE[_onnx_dtype(dtype)]
 
 
 def onnx2field(dtype):

@@ -12,6 +12,11 @@ try:
 except ImportError:  # will be 3.x series
     pass
 
+# TODO(minhoolee): Delete this, debugging only
+from pprint import pprint
+
+import numpy as np
+
 from onnx import defs
 from onnx import numpy_helper
 from onnx.backend.base import Backend
@@ -19,7 +24,7 @@ from onnx.backend.base import Device
 from onnx.backend.base import namedtupledict
 from onnx.helper import make_opsetid
 
-import onnx_darknet.darknet as dn
+import onnx_darknet.darknet.darknet_ctypes as dn
 
 from onnx_darknet.backend_rep import DarknetRep
 from onnx_darknet.common import attr_converter
@@ -111,19 +116,16 @@ class DarknetBackend(Backend):
             input_dict_items = cls._onnx_initializer_to_input_dict_items(
                 graph_def.initializer)
             initialized = {init.name for init in graph_def.initializer}
+            # pprint("input_dict_items.shape: {}".format(input_dict_items.shape))
         else:
             input_dict_items = []
             initialized = set()
-
-        # TODO(minhoolee): Not necessary for me because Darknet doesn't have
-        # placeholder variables. Fix run() to handle input
 
         # Creating placeholders for currently unknown inputs
         for value_info in graph_def.input:
             if value_info.name in initialized:
                 continue
 
-            # Extract shape dimensions of each input
             shape = list(
                 d.dim_value if (
                     d.dim_value > 0 and d.dim_param == "") else None
@@ -134,14 +136,11 @@ class DarknetBackend(Backend):
             #     name=value_info.name,
             #     shape=shape)
 
-            # input_dict_items.append((value_info.name, x))
-            input_dict_items.append((value_info.name, shape))
+            x = np.empty(shape=shape,
+                         dtype=data_type.onnx2np(
+                             value_info.type.tensor_type.elem_type))
 
-        # TODO(minhoolee): May not need tensor_dict; it's used for feeding session
-        # values. When onnx node -> tf_op, onnx_tf calls the appropriate tf_op,
-        # which, if it is a layer, adds it to the graph and then returns a
-        # placeholder TF Tensor. Thus converting each node, it adds the tf_op
-        # to the graph.
+            input_dict_items.append((value_info.name, x))
 
         # tensor dict: this dictionary is a map from variable names
         # to the latest produced tensors of the given name.
@@ -156,13 +155,14 @@ class DarknetBackend(Backend):
             onnx_node = OnnxNode(node)
             output_ops = cls._onnx_node_to_darknet_op(
                 onnx_node, tensor_dict, handlers, opset=opset, strict=strict)
-            layers.append(op) if type(op) is dn.layer for op in output_ops
+            layers.extend([op for op in output_ops if type(op) is dn.layer])
             curr_node_output_map = dict(zip(onnx_node.outputs, output_ops))
             tensor_dict.update(curr_node_output_map)
+            break
 
+        pprint(layers)
 
-        # Create Darknet network using list of topologically ordered layers
-        # TODO(minhoolee): Load weights using initialized ONNX nodes
+        # Create Darknet network using topologically ordered layers
         dn_net = dn.init_network(layers)
         for i, layer in enumerate(layers):
             dn_net.contents.layers[i] = layer
@@ -228,7 +228,7 @@ class DarknetBackend(Backend):
         def tensor2list(onnx_tensor):
             # Use the onnx.numpy_helper because the data may be raw
             # TODO(minhoolee): figure out if flatten() should be removed
-            return numpy_helper.to_array(onnx_tensor).flatten().tolist()
+            return numpy_helper.to_array(onnx_tensor).tolist()
 
         # return [(init.name,
         #          tf.constant(
@@ -236,6 +236,7 @@ class DarknetBackend(Backend):
         #              shape=init.dims,
         #              dtype=data_type.onnx2tf(init.data_type)))
         #         for init in initializer]
+
         return [(init.name, np.array(tensor2list(init))) for init in initializer]
 
     @classmethod
