@@ -23,8 +23,9 @@ class ConvMixin(BroadcastMixin):
         # x is either previous layer or data tensor since Darknet layers do not
         # provide placeholder tensor objects
         x = input_dict[node.inputs[0]]
-        if type(x) is dn.layer:
-            N, C, H, W = x.batch, x.c, x.h, x.w
+        if isinstance(x, dn.layer):
+            N, C, H, W = x.batch, x.out_c, x.out_h, x.out_w
+            spatial_size = 2
         else:
             spatial_size = len(x.shape) - 2
             if spatial_size != 2:

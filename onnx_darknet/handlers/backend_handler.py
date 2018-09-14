@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import copy
 import inspect
 
-# # import tensorflow as tf
+# import tensorflow as tf
 
 from onnx_darknet.common import IS_PYTHON3
 from onnx_darknet.common import get_data_format

@@ -1,5 +1,4 @@
-import numpy as np
-# import tensorflow as tf
+import onnx_darknet.darknet.darknet_ctypes as dn
 
 from onnx_darknet.handlers.backend_handler import BackendHandler
 from onnx_darknet.handlers.handler import onnx_op
@@ -7,21 +6,26 @@ from onnx_darknet.handlers.handler import darknet_func
 
 
 @onnx_op("Softmax")
-@darknet_func(tf.nn.softmax)
 class Softmax(BackendHandler):
 
-  @classmethod
-  def version_1(cls, node, **kwargs):
-    x = kwargs["tensor_dict"][node.inputs[0]]
-    axis = node.attrs.get("axis", 1)
-    axis = axis if axis >= 0 else len(np.shape(x)) + axis
+    @classmethod
+    def version_1(cls, node, **kwargs):
+        x = kwargs["tensor_dict"][node.inputs[0]]
 
-    if axis == len(np.shape(x)) - 1:
-      return [cls.make_tensor_from_onnx_node(node, **kwargs)]
+        if isinstance(x, dn.layer):
+            N, nb_inputs = x.batch, x.outputs
+        else:
+            spatial_size = len(x.shape) - 2
+            if spatial_size != 2:
+                raise NotImplementedError(
+                    "Softmax for {}d is not implemented "
+                    "in Darknet").format(spatial_size)
+            N, C, H, W = x.shape
+            nb_inputs = C * H * W
 
-    shape = tf.shape(x)
-    cal_shape = (tf.reduce_prod(shape[0:axis]),
-                 tf.reduce_prod(shape[axis:tf.size(shape)]))
-    x = tf.reshape(x, cal_shape)
+        # ONNX does not support grouped softmax
+        dn_defaults = {'groups': 1}
 
-    return [tf.reshape(tf.nn.softmax(x), shape)]
+        layer = dn.make_softmax_layer(N, nb_inputs, dn_defaults['groups'])
+
+        return [layer]

@@ -10,9 +10,16 @@ class Sigmoid(BackendHandler):
 
     @classmethod
     def _common(cls, node, **kwargs):
-        layer = kwargs['tensor_dict'][node.inputs[0]]
-        layer.activation = dn.ACTIVATION.LOGISTIC
-        return None
+        x = kwargs['tensor_dict'][node.inputs[0]]
+
+        assert isinstance(x, dn.layer), (
+            "Darknet activation {} must be applied after Darknet layer "
+            "instead of {}").format(cls.ONNX_OP, x)
+
+        x.activation = dn.ACTIVATION.LOGISTIC
+
+        # TODO(minhoolee): Figure out better return value
+        return np.empty(shape=[x.batch, x.out_c, x.out_h, x.out_w])
 
     @classmethod
     def version_1(cls, node, **kwargs):

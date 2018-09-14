@@ -106,20 +106,18 @@ class DarknetBackend(Backend):
         """
         handlers = cls._get_handlers(opset)
 
-        # tf_rep_graph = tf.Graph()
-        # with tf_rep_graph.as_default():
-
         # initializer: TensorProtos representing the values to initialize
         # a given tensor.
         # initialized: A list of names of the initialized tensors.
-        if graph_def.initializer:
-            input_dict_items = cls._onnx_initializer_to_input_dict_items(
-                graph_def.initializer)
-            initialized = {init.name for init in graph_def.initializer}
-            # pprint("input_dict_items.shape: {}".format(input_dict_items.shape))
-        else:
-            input_dict_items = []
-            initialized = set()
+        # if graph_def.initializer:
+        #     input_dict_items = cls._onnx_initializer_to_input_dict_items(
+        #         graph_def.initializer)
+        #     initialized = {init.name for init in graph_def.initializer}
+        # else:
+        #     input_dict_items = []
+        #     initialized = set()
+        input_dict_items = []
+        initialized = set()
 
         # Creating placeholders for currently unknown inputs
         for value_info in graph_def.input:
@@ -130,11 +128,6 @@ class DarknetBackend(Backend):
                 d.dim_value if (
                     d.dim_value > 0 and d.dim_param == "") else None
                 for d in value_info.type.tensor_type.shape.dim)
-
-            # x = tf.placeholder(
-            #     data_type.onnx2tf(value_info.type.tensor_type.elem_type),
-            #     name=value_info.name,
-            #     shape=shape)
 
             x = np.empty(shape=shape,
                          dtype=data_type.onnx2np(
@@ -148,24 +141,67 @@ class DarknetBackend(Backend):
         # record the names of newly produced tensors.
         tensor_dict = dict(input_dict_items)
 
+        # Store names of topologically ordered layers
+        layers = list()
+
+        # TODO(minhoolee): Debugging; remove these; just to skip
+        # unimplememented ops
+        unimplemented = {"Dropout", "MaxPool", "Gemm"}
+        # Packaged ops directly attach to their parents
+        packaged = {"Relu", "Sigmoid", "Dropout", "BatchNormalization"}
+        nodes = {node.name: OnnxNode(node) for node in graph_def.node}
+
+        # DFS and remove unimplemented operation packages
+        def remove_node(onnx_node):
+            parents = onnx_node.inputs
+            children = [child for child, node in nodes.items()
+                        if onnx_node.name in node.inputs]
+            for parent in reversed(parents):
+                if parent.startswith(onnx_node.name.replace('_fwd', '')):
+                    parents.remove(parent)
+            print('Skipping {} such that {} maps to '
+                  '{}'.format(onnx_node.name, parents, children))
+            for parent in parents:
+                nodes[parent].outputs = children
+            for child in children:
+                # Replace child's input without losing other child inputs
+                if nodes[child].op_type in packaged or nodes[child].op_type in unimplemented:
+                    remove_node(nodes[child])
+                index = nodes[child].inputs.index(onnx_node.name)
+                nodes[child].inputs[index: index + 1] = parents
+
         # Call Darknet ops corresponding to ONNX nodes and map ONNX node
         # outputs to Darknet op return values
-        layers = []
         for node in graph_def.node:
-            onnx_node = OnnxNode(node)
+            # onnx_node = OnnxNode(node)
+            onnx_node = nodes[node.name]
+
+            # Skip unimplemented nodes
+            if onnx_node.op_type in unimplemented:
+                remove_node(onnx_node)
+                continue
+
+            name = onnx_node.name + " (" + onnx_node.op_type + ")"
+            print(('=' * 20 + ' {} ' + '=' * 20 + '\n').format(name))
+
             output_ops = cls._onnx_node_to_darknet_op(
                 onnx_node, tensor_dict, handlers, opset=opset, strict=strict)
-            layers.extend([op for op in output_ops if type(op) is dn.layer])
             curr_node_output_map = dict(zip(onnx_node.outputs, output_ops))
+            layers.extend([name
+                           for name, op in zip(onnx_node.outputs, output_ops)
+                           if isinstance(op, dn.layer)])
             tensor_dict.update(curr_node_output_map)
-            break
 
+            print(('=' * 20 + '{}' + '=' * 20 + '\n').format('=' * (len(name) + 2)))
+
+        print()
+        print()
         pprint(layers)
+        # for layer in layers:
+        #     pprint("Layer {}: {}".format(layer, tensor_dict[layer]))
 
-        # Create Darknet network using topologically ordered layers
-        dn_net = dn.init_network(layers)
-        for i, layer in enumerate(layers):
-            dn_net.contents.layers[i] = layer
+        print("Initializing network")
+        dn_net = dn.init_network([tensor_dict[layer] for layer in layers])
 
         dn_rep = DarknetRep()
         dn_rep.graph = dn_net
