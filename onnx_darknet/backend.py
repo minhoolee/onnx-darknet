@@ -146,7 +146,7 @@ class DarknetBackend(Backend):
 
         # TODO(minhoolee): Debugging; remove these; just to skip
         # unimplememented ops
-        unimplemented = {"Dropout", "MaxPool"}
+        unimplemented = {"Dropout"}
         # Packaged ops directly attach to their parents
         packaged = {"Relu", "Sigmoid", "Dropout", "BatchNormalization"}
         nodes = {node.name: OnnxNode(node) for node in graph_def.node}

@@ -13,11 +13,9 @@ class Gemm(BackendHandler):
         weights = kwargs["tensor_dict"][node.inputs[1]]
 
         if isinstance(x, dn.layer):
-            print("Using layer {}".format(node.inputs[0]))
             M = x.batch
             K = x.outputs
         else:
-            print("Using tensor {} ({})".format(node.inputs[0], x.shape))
             spatial_size = len(x.shape) - 2
             if spatial_size != 2:
                 raise NotImplementedError(
@@ -34,13 +32,9 @@ class Gemm(BackendHandler):
         if node.attrs.get("transB", 0):
             K_, N = N, K_
 
-        # TODO(minhoolee): Revert this; temporary fix for skipping max pool
-        # layer's dimensionality reduction
-
-        # assert K == K_, (
-        #     "X.cols != Y.rows. X ({}, {}) and Y ({}, {}) cannot be multiplied "
-        #     "with dot product").format(M, K, K_, N)
-        K = K_
+        assert K == K_, (
+            "X.cols != Y.rows. X ({}, {}) and Y ({}, {}) cannot be multiplied "
+            "with dot product").format(M, K, K_, N)
 
         alpha = node.attrs.get("alpha", 1.0)
         beta = node.attrs.get("beta", 1.0)
