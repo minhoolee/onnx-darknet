@@ -148,6 +148,7 @@ layer make_upsample_layer(int batch, int w, int h, int c, int stride)
 - Following layers are special
   - Activation: Darknet activation is string passed to previous layer but ONNX activation is separate Node
   - Dropout: Darknet dropout is applied to previous layer of network (and takes previous layer's output and delta)
+  - Batchnorm: Darknet batchnorm is also attribute of previous layer
   - Route: Looks at layer(s) offset by int value(s) and potentially combines them into one layer
 
 #### ONNX -> DarknetRep
@@ -165,12 +166,13 @@ layer make_upsample_layer(int batch, int w, int h, int c, int stride)
 3. Call save_weights() using network C object
 
 ### Timeline
-1. Convert vgg model (ONNX format) to DarknetRep
-2. Convert vgg model (ONNX format) to DarknetRep to Darknet
-3. Convert vgg model (Darknet format) to ONNX format and back to Darknet format
-4. Add additional ONNX unsupported ops like region and yolo
-5. Add additional ONNX supported ops like GRU, LSTM, AvgPool
-6. Abstractify input and outputs to be tensors?
-7. Use pybind11 or cython instead of ctypes?
-8. Add more preprocessing ops (supported and unsupported)
-9. Allow training
+1. Convert tiny yolo v2 model (ONNX format) to DarknetRep
+2. Convert tiny yolo v2 model (ONNX format) to DarknetRep to Darknet
+3. Convert tiny yolo v2 model (Darknet format) to ONNX format and back to Darknet format
+4. Figure out preprocessing for models like VGG (cropping, mean subtracting, etc.)
+5. Add additional ONNX unsupported ops like region and yolo
+6. Add additional ONNX supported ops like GRU, LSTM, AvgPool
+7. Abstractify input and outputs to be tensors?
+8. Use pybind11 or cython instead of ctypes?
+9. Add more preprocessing ops (supported and unsupported)
+10. Allow training
