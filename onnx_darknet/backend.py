@@ -146,7 +146,7 @@ class DarknetBackend(Backend):
 
         # TODO(minhoolee): Debugging; remove these; just to skip
         # unimplememented ops
-        unimplemented = {"Dropout"}
+        unimplemented = {}
         # Packaged ops directly attach to their parents
         packaged = {"Relu", "Sigmoid", "Dropout", "BatchNormalization"}
         nodes = {node.name: OnnxNode(node) for node in graph_def.node}
@@ -182,7 +182,7 @@ class DarknetBackend(Backend):
                 continue
 
             name = onnx_node.name + " (" + onnx_node.op_type + ")"
-            print(('=' * 20 + ' {} ' + '=' * 20 + '\n').format(name))
+            # print(('=' * 20 + ' {} ' + '=' * 20 + '\n').format(name))
 
             output_ops = cls._onnx_node_to_darknet_op(
                 onnx_node, tensor_dict, handlers, opset=opset, strict=strict)
@@ -192,7 +192,7 @@ class DarknetBackend(Backend):
                            if isinstance(op, dn.layer)])
             tensor_dict.update(curr_node_output_map)
 
-            print(('=' * 20 + '{}' + '=' * 20 + '\n').format('=' * (len(name) + 2)))
+            # print(('=' * 20 + '{}' + '=' * 20 + '\n').format('=' * (len(name) + 2)))
 
         print()
         print()

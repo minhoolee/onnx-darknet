@@ -23,6 +23,7 @@ class ConvMixin(BroadcastMixin):
         # x is either previous layer or data tensor since Darknet layers do not
         # provide placeholder tensor objects
         x = input_dict[node.inputs[0]]
+
         if isinstance(x, dn.layer):
             N, C, H, W = x.batch, x.out_c, x.out_h, x.out_w
             spatial_size = 2
@@ -34,9 +35,6 @@ class ConvMixin(BroadcastMixin):
                     "in Darknet").format(spatial_size)
             N, C, H, W = x.shape
 
-        # TODO(minhoolee): Figure out how to load weights and bias
-        # (numpy arrays) to Darknet layer through custom load function after
-        # creating the layer
         # Shape (M x C/group x KH x KW)
         weights = input_dict[node.inputs[1]]
         weights_spatial_shape = list(weights.shape)[2:]
@@ -48,7 +46,7 @@ class ConvMixin(BroadcastMixin):
                 "attr {}, actual {}").format(kernel_shape, weights.shape)
 
         nb_filters = weights.shape[1]
-        k_size = weights.shape[2]
+        kernel_size = weights.shape[2]
         dilations = node.attrs.get("dilations", [1] * spatial_size)
         # TODO(minhoolee): Figure out if and why Darknet is computing groups in
         # seequence and not in parallel
@@ -58,7 +56,7 @@ class ConvMixin(BroadcastMixin):
         strides = node.attrs.get("strides", [1] * spatial_size)
         pads = node.attrs.get("pads", [0, 0] * spatial_size)
 
-        if all(dim_size != k_size for dim_size in weights_spatial_shape):
+        if all(dim_size != kernel_size for dim_size in weights_spatial_shape):
             raise NotImplementedError(
                 "Non-square convolutional kernel {} is not implemented in "
                 "Darknet").format(weights_spatial_shape)
@@ -90,13 +88,13 @@ class ConvMixin(BroadcastMixin):
 
         if transpose:
             layer = dn.make_deconvolutional_layer(N, H, W, C,
-                                                  nb_filters, k_size, stride, pad,
+                                                  nb_filters, kernel_size, stride, pad,
                                                   dn_defaults['activation'],
                                                   dn_defaults['batch_normalize'],
                                                   dn_defaults['adam'])
         else:
             layer = dn.make_convolutional_layer(N, H, W, C,
-                                                nb_filters, group, k_size, stride, pad,
+                                                nb_filters, group, kernel_size, stride, pad,
                                                 dn_defaults['activation'],
                                                 dn_defaults['batch_normalize'],
                                                 dn_defaults['binary'],

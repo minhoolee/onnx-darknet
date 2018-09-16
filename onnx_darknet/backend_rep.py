@@ -18,6 +18,11 @@ class DarknetRep(BackendRep):
         self._outputs = outputs or []
         self._tensor_dict = tensor_dict or {}
 
+    def __del__(self):
+        # TODO(minhoolee): Check if using CUDA
+        if self._graph is not None:
+            dn.free_network(self._graph)
+
     @property
     def graph(self):
         return self._graph

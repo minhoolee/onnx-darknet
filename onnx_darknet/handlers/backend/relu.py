@@ -21,12 +21,12 @@ class Relu(BackendHandler):
         x.activation = dn.ACTIVATION.RELU
 
         # TODO(minhoolee): Figure out better return value
-        return np.empty(shape=[x.batch, x.out_c, x.out_h, x.out_w])
+        return [np.empty(shape=[x.batch, x.out_c, x.out_h, x.out_w])]
 
     @classmethod
     def version_1(cls, node, **kwargs):
-        return [cls._common(node, **kwargs)]
+        return cls._common(node, **kwargs)
 
     @classmethod
     def version_6(cls, node, **kwargs):
-        return [cls._common(node, **kwargs)]
+        return cls._common(node, **kwargs)
