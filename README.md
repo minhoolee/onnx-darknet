@@ -1,6 +1,8 @@
 # Darknet Neural Network Backend and Frontend for ONNX
 [![Build Status](https://travis-ci.org/minhoolee/onnx-darknet.svg?branch=master)](https://travis-ci.org/minhoolee/onnx-darknet)
 
+### This project is still in the early stages of development so please revisit later.
+
 [ONNX-Darknet API](https://github.com/minhoolee/onnx-darknet/blob/master/doc/API.md)
 
 [ONNX-Darknet Op Coverage Status](https://github.com/minhoolee/onnx-darknet/blob/master/doc/support_status.md)

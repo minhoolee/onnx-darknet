@@ -1,10 +1,10 @@
-ONNX-Tensorflow API
+ONNX-Darknet API
 ======
 
 #### `onnx_darknet.backend.prepare`
 
 <details>
-  <summary>Prepare an ONNX model for Tensorflow Backend.
+  <summary>Prepare an ONNX model for Darknet Backend.
 
   </summary>
 This function converts an ONNX model to an internel representation
@@ -24,7 +24,7 @@ _params_:
 
 
 `strict` : Whether to enforce semantic equivalence between the original model
-and the converted tensorflow model, defaults to True (yes, enforce semantic equivalence).
+and the converted darknet model, defaults to True (yes, enforce semantic equivalence).
 Changing to False is strongly discouraged.
 Currently, the strict flag only affects the behavior of MaxPool and AveragePool ops.
 
@@ -36,12 +36,12 @@ A DarknetRep class object representing the ONNX model
 #### `onnx_darknet.backend_rep.DarknetRep.export_graph`
 
 <details>
-  <summary>Export backend representation to a Tensorflow proto file.
+  <summary>Export backend representation to darknet cfg and weights files.
 
   </summary>
-This function obtains the graph proto corresponding to the ONNX
+This function obtains the model cfg and weights corresponding to the ONNX
 model associated with the backend representation and serializes
-to a protobuf file.
+to .cfg and .weights files.
 
 </details>
 
@@ -49,20 +49,22 @@ to a protobuf file.
 
 _params_:
 
-`path` : The path to the output TF protobuf file.
+`cfg_path` : The path to the output DN .cfg file
+`weights_path` : The path to the output DN .weights file
 
 
 _returns_:
 
 none.
 
-#### `onnx_darknet.frontend.tensorflow_graph_to_onnx_model`
+#### `onnx_darknet.frontend.darknet_graph_to_onnx_model`
+#### Warning: Not supported yet
 
 <details>
-  <summary>Converts a Tensorflow Graph Proto to an ONNX model
+  <summary>Converts Darknet cfg and weights to an ONNX model
 
   </summary>
-This function converts a Tensorflow Graph proto to an equivalent
+This function converts Darknet .cfg and .weights files to an equivalent
 representation of ONNX model.
 
 </details>
@@ -71,7 +73,7 @@ representation of ONNX model.
 
 _params_:
 
-`graph_def` : Tensorflow Graph Proto object.
+`graph_def` : Darknet cfg and weights object.
 
 
 `output` : List of string or a string specifying the name
@@ -90,7 +92,7 @@ List or tuple items should be (str domain, int version number).
 
 
 `ignore_unimplemented` : Convert to ONNX model and ignore all the operators
-that are not currently supported by onnx-tensorflow.
+that are not currently supported by onnx-darknet.
 This is an experimental feature. By enabling this feature,
 the model would not be guaranteed to match the ONNX specifications.
 

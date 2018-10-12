@@ -12,10 +12,10 @@ try:
 except ImportError:  # will be 3.x series
     pass
 
+import numpy as np
+
 # TODO(minhoolee): Delete this, debugging only
 from pprint import pprint
-
-import numpy as np
 
 from onnx import defs
 from onnx import numpy_helper
@@ -93,8 +93,6 @@ class DarknetBackend(Backend):
         return cls._onnx_graph_to_darknet_rep(model.graph, model.opset_import, strict)
 
     @classmethod
-    # TODO: convert this method
-    # Use Darknet's network (defined in darknet.h)
     def _onnx_graph_to_darknet_rep(cls, graph_def, opset, strict):
         """ Convert ONNX graph to DarknetRep.
 
@@ -106,16 +104,6 @@ class DarknetBackend(Backend):
         """
         handlers = cls._get_handlers(opset)
 
-        # initializer: TensorProtos representing the values to initialize
-        # a given tensor.
-        # initialized: A list of names of the initialized tensors.
-        # if graph_def.initializer:
-        #     input_dict_items = cls._onnx_initializer_to_input_dict_items(
-        #         graph_def.initializer)
-        #     initialized = {init.name for init in graph_def.initializer}
-        # else:
-        #     input_dict_items = []
-        #     initialized = set()
         input_dict_items = []
         initialized = set()
 
@@ -227,31 +215,33 @@ class DarknetBackend(Backend):
         :return: Outputs.
         """
         super(DarknetBackend, cls).run_node(node, inputs, device)
-        node_graph = tf.Graph()
-        with node_graph.as_default():
-            node = OnnxNode(node)
-            device_option = get_device_option(Device(device))
-            input_tensors = []
-            for i in inputs:
-                input_tensors.append(tf.constant(i))
 
-            if isinstance(inputs, dict):
-                feed_dict_raw = inputs
-            else:
-                assert len(node.inputs) == len(inputs)
-                feed_dict_raw = dict(zip(node.inputs, inputs))
-
-            # TODO: is constant the best way for feeding inputs?
-            input_dict = dict(
-                [(x[0], tf.constant(x[1])) for x in feed_dict_raw.items()])
-            ops = cls._onnx_node_to_darknet_op(node, input_dict)
-
-            with tf.Session() as sess:
-                with tf.device(device_option):
-                    sess.run(tf.global_variables_initializer())
-                    output_vals = sess.run(ops)
-
-        return namedtupledict('Outputs', node.outputs)(*output_vals)
+        #TODO(minhoolee): Fill this in to construct a model and then run on op
+        # node_graph = tf.Graph()
+        # with node_graph.as_default():
+        #     node = OnnxNode(node)
+        #     device_option = get_device_option(Device(device))
+        #     input_tensors = []
+        #     for i in inputs:
+        #         input_tensors.append(tf.constant(i))
+        #
+        #     if isinstance(inputs, dict):
+        #         feed_dict_raw = inputs
+        #     else:
+        #         assert len(node.inputs) == len(inputs)
+        #         feed_dict_raw = dict(zip(node.inputs, inputs))
+        #
+        #     # TODO: is constant the best way for feeding inputs?
+        #     input_dict = dict(
+        #         [(x[0], tf.constant(x[1])) for x in feed_dict_raw.items()])
+        #     ops = cls._onnx_node_to_darknet_op(node, input_dict)
+        #
+        #     with tf.Session() as sess:
+        #         with tf.device(device_option):
+        #             sess.run(tf.global_variables_initializer())
+        #             output_vals = sess.run(ops)
+        #
+        # return namedtupledict('Outputs', node.outputs)(*output_vals)
 
     @classmethod
     def _onnx_initializer_to_input_dict_items(cls, initializer):
@@ -263,15 +253,7 @@ class DarknetBackend(Backend):
 
         def tensor2list(onnx_tensor):
             # Use the onnx.numpy_helper because the data may be raw
-            # TODO(minhoolee): figure out if flatten() should be removed
             return numpy_helper.to_array(onnx_tensor).tolist()
-
-        # return [(init.name,
-        #          tf.constant(
-        #              tensor2list(init),
-        #              shape=init.dims,
-        #              dtype=data_type.onnx2tf(init.data_type)))
-        #         for init in initializer]
 
         return [(init.name, np.array(tensor2list(init))) for init in initializer]
 

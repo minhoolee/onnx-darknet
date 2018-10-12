@@ -16,19 +16,22 @@ A __self-contained__ piece of code that can demonstrate the problem is required.
 
 Please do not expect us to have PyTorch, Caffe2 installed.
 
-If a model exported from PyTorch and Caffe2 is having trouble in ONNX-TF, use the next section to attach the model.
+If a model exported from PyTorch and Caffe2 is having trouble in ONNX-DN, use the next section to attach the model.
 
 **ONNX model file**
 
 If applicable, attach the onnx model file in question using Gist, DropBox or Google Drive.
 
-**Python, ONNX, ONNX-TF, Tensorflow version**
+**Python, ONNX, ONNX-DN, Darknet version and Makefile flags**
 
 This section can be obtained by running `get_version.py` from util folder.
- - Python version: 
- - ONNX version: 
- - ONNX-TF version:
- - Tensorflow version: 
+ - Python version:
+ - ONNX version:
+ - ONNX-DN version:
+
+Please supply the Darknet details (e.g. CUDA, CUDNN) from your Makefile config
+ - Darknet version:
+ - Darknet build flags:
 
 **Additional context**
 

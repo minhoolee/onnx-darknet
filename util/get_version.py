@@ -5,7 +5,6 @@ from __future__ import unicode_literals
 
 import sys
 import onnx
-import tensorflow
 import onnx_darknet
 import pkg_resources
 
@@ -13,7 +12,5 @@ print("Python version:")
 print(sys.version)
 print("ONNX version:")
 print(onnx.version.version)
-print("ONNX-TF version:")
-print(pkg_resources.get_distribution("onnx-tf").version)
-print("Tensorflow version:")
-print(tensorflow.__version__)
+print("ONNX-DN version:")
+print(pkg_resources.get_distribution("onnx-dn").version)

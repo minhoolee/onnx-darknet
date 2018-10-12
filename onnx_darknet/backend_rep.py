@@ -72,48 +72,54 @@ class DarknetRep(BackendRep):
         """
         super(DarknetRep, self).run(inputs, **kwargs)
 
+        # TODO(minhoolee): Figure out how to pass data through to DN model
+
         # TODO: handle name scope if necessary
-        with self.graph.as_default():
-            with tf.Session() as sess:
-                if isinstance(inputs, dict):
-                    feed_dict = inputs
-                elif isinstance(inputs, list) or isinstance(inputs, tuple):
-                    if len(self.inputs) != len(inputs):
-                        raise RuntimeError('Expected {} values for uninitialized '
-                                           'graph inputs ({}), but got {}.'.format(
-                                               len(self.inputs), ', '.join(
-                                                   self.inputs),
-                                               len(inputs)))
-                    feed_dict = dict(zip(self.inputs, inputs))
-                else:
-                    # single input
-                    feed_dict = dict([(self.inputs[0], inputs)])
+        # with self.graph.as_default():
+        #     with tf.Session() as sess:
+        #         if isinstance(inputs, dict):
+        #             feed_dict = inputs
+        #         elif isinstance(inputs, list) or isinstance(inputs, tuple):
+        #             if len(self.inputs) != len(inputs):
+        #                 raise RuntimeError('Expected {} values for uninitialized '
+        #                                    'graph inputs ({}), but got {}.'.format(
+        #                                        len(self.inputs), ', '.join(
+        #                                            self.inputs),
+        #                                        len(inputs)))
+        #             feed_dict = dict(zip(self.inputs, inputs))
+        #         else:
+        #             # single input
+        #             feed_dict = dict([(self.inputs[0], inputs)])
+        #
+        #         feed_dict = {
+        #             self.tensor_dict[key]: feed_dict[key]
+        #             for key in self.inputs
+        #         }
+        #
+        #         sess.run(tf.global_variables_initializer())
+        #         outputs = [self.tensor_dict[output] for output in self.outputs]
+        #
+        #         # TODO(minhoolee): figure out how to add a constructed layer / op to network
+        #         # instead of sess.run(ops)
+        #         output_values = sess.run(outputs, feed_dict=feed_dict)
+        #         return namedtupledict('Outputs', self.outputs)(*output_values)
 
-                feed_dict = {
-                    self.tensor_dict[key]: feed_dict[key]
-                    for key in self.inputs
-                }
+    def export_graph(self, cfg_path, weights_path):
+        """Export backend representation to Darknet .cfg and .weights files
 
-                sess.run(tf.global_variables_initializer())
-                outputs = [self.tensor_dict[output] for output in self.outputs]
-
-                # TODO(minhoolee): figure out how to add a constructed layer / op to network
-                # instead of sess.run(ops)
-                output_values = sess.run(outputs, feed_dict=feed_dict)
-                return namedtupledict('Outputs', self.outputs)(*output_values)
-
-    def export_graph(self, path):
-        """Export backend representation to a Tensorflow proto file.
-
-        This function obtains the graph proto corresponding to the ONNX
+        This function obtains the model cfg and weights corresponding to the ONNX
         model associated with the backend representation and serializes
-        to a protobuf file.
+        to .cfg and .weights files.
 
-        :param path: The path to the output TF protobuf file.
+        :param cfg_path: The path to the output DN .cfg file
+        :param weights_path: The path to the output DN .weights file
 
         :returns: none.
         """
-        graph_proto = self.graph.as_graph_def()
-        file = open(path, "wb")
-        file.write(graph_proto.SerializeToString())
-        file.close()
+        # TODO(minhoolee): Need to write logic for saving model cfg
+        # Saving weights logic is already written in, thankfully
+
+        # graph_proto = self.graph.as_graph_def()
+        # file = open(path, "wb")
+        # file.write(graph_proto.SerializeToString())
+        # file.close()
